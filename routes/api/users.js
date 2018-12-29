@@ -13,8 +13,8 @@ router.get('/test', (req, res) => res.json({
   msg: 'Users Works'
 }));
 
-// @route       POST api/users/test
-// @description Tests users route
+// @route       POST api/users/regiter
+// @description Register user
 // @access      Public
 router.post('/register', (req, res) => {
   User.findOne({
@@ -53,4 +53,39 @@ router.post('/register', (req, res) => {
     })
 });
 
-module.exports = router;
+// @route       POST api/users/login
+// @description Login user / returning jsonWebToken token
+// @access      Public
+router.post('/login', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  //Find user by email
+  User.findOne({
+      email: email
+    })
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({
+          msg: 'User not found'
+        })
+      }
+      // check password
+      bcryptjs.compare(password, user.password)
+        .then(isMatch => {
+          if (isMatch) {
+            res.json({
+              msg: 'Success'
+            })
+          } else {
+            return res.status(400).json({
+              password: 'Password incorrect'
+            })
+          }
+        })
+    })
+});
+
+module.exports = router; {
+  email: 'User not found'
+}

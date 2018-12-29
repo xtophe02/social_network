@@ -10,7 +10,8 @@ const app = express();
 
 // Body parser middleware
 app.use(bodyParser.urlencoded({
-  extended: false
+  extended: false,
+  useNewUrlParser: true
 }));
 app.use(bodyParser.json());
 
