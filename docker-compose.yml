@@ -9,3 +9,12 @@ services:
       - ./api:/app
     ports:
       - "5000:5000"
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    ports:
+      - "3000:3000"
