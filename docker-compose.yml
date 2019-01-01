@@ -1,11 +1,11 @@
 version: "3"
 services:
-  app:
+  api:
     build:
       dockerfile: Dockerfile.dev
-      context: .
+      context: ./api
     volumes:
       - /app/node_modules
-      - .:/app
+      - ./api:/app
     ports:
-      - "3000:3000"
+      - "5000:5000"
