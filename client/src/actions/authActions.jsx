@@ -1,8 +1,11 @@
-import { GET_ERRORS } from "./types";
 import mlab from "../components/api/Mlab";
+import setAuthToken from "../utils/setAuthToken";
+import jwt_decode from "jwt-decode";
+
+import { GET_ERRORS, SET_CURRENT_USER } from "./types";
 
 // Register User
-export const registerUser = (userData, history) => async dispatch => {
+export const registerUser = (userData, history) => dispatch => {
   mlab
     .post("/api/users/register", userData)
     .then(res => history.push("/login"))
@@ -12,13 +15,40 @@ export const registerUser = (userData, history) => async dispatch => {
         payload: err.response.data
       })
     );
-  // try {
-  //   const resp = await mlab.post("/api/users/register", userData);
-  //   console.log(resp.data);
-  // } catch (err) {
-  //   dispatch({
-  //     type: GET_ERRORS,
-  //     payload: err.response.data
-  //   });
-  // }
+};
+
+// Login User
+export const loginUser = userData => dispatch => {
+  mlab
+    .post("/api/users/login", userData)
+    .then(res => {
+      // SAve to localStorage
+      const { token } = res.data;
+
+      // Set token to localStorage
+      localStorage.setItem("jwtToken", token);
+
+      //Set to auth header
+      setAuthToken(token);
+
+      //Decode token to get user data
+      const decoded = jwt_decode(token);
+
+      //Set current user
+      dispatch(setCurrentUser(decoded));
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// Set loggedin user
+export const setCurrentUser = decoded => {
+  return {
+    type: SET_CURRENT_USER,
+    payload: decoded
+  };
 };
