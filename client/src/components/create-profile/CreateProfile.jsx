@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+
+import { createProfile } from "../../actions/profileActions";
 
 import TextFieldGroup from "../common/TextFieldGroup";
 import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
@@ -27,19 +29,44 @@ class CreateProfile extends Component {
     errors: {}
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
+      });
+    }
+  }
+
   onChange = e => {
     this.setState({
-      [e.targe.name]: e.target.value
+      [e.target.name]: e.target.value
     });
   };
 
   onSubmit = e => {
     e.preventDefault();
-    console.log("submit");
+    const profileData = {
+      handle: this.state.handle,
+      company: this.state.company,
+      website: this.state.website,
+      location: this.state.location,
+      status: this.state.status,
+      skills: this.state.skills,
+      githubusername: this.state.githubusername,
+      bio: this.state.bio,
+      twitter: this.state.twitter,
+      facebook: this.state.facebook,
+      linkedin: this.state.linkedin,
+      youtube: this.state.youtube,
+      instagram: this.state.instagram
+    };
+
+    this.props.createProfile(profileData, this.props.history);
   };
 
   render() {
     const { errors, displaySocialInputs } = this.state;
+    const { user } = this.props.auth;
 
     let socialInputs;
 
@@ -101,6 +128,7 @@ class CreateProfile extends Component {
       { label: "Intern", value: "Intern" },
       { label: "Other", value: "Other" }
     ];
+
     return (
       <div className="create-profile">
         <div className="container">
@@ -109,7 +137,9 @@ class CreateProfile extends Component {
               <Link to="/dashboard" className="btn btn-light">
                 Go Back
               </Link>
-              <h1 className="display-4 text-center">Create Your Profile</h1>
+              <h1 className="display-4 text-center">
+                Create Your Profile {user.name}
+              </h1>
               <p className="lead text-center">
                 Let's get some information to make your profile stand out
               </p>
@@ -157,7 +187,7 @@ class CreateProfile extends Component {
                   info="City & state suggested (eg. Kampenhout, Flemish Brabant)"
                 />
                 <TextFieldGroup
-                  placeholder="Skills"
+                  placeholder="* Skills"
                   name="skills"
                   value={this.state.skills}
                   onChange={this.onChange}
@@ -182,6 +212,7 @@ class CreateProfile extends Component {
                 />
                 <div className="mb-3">
                   <button
+                    type="button"
                     className="btn btn-light"
                     onClick={() => {
                       this.setState(prevState => ({
@@ -195,9 +226,9 @@ class CreateProfile extends Component {
                 </div>
                 {socialInputs}
                 <input
-                  type="text"
+                  type="submit"
                   value="Submit"
-                  className="btn btn-info btn-block mt-4:suv"
+                  className="btn btn-info btn-block mt-4"
                 />
               </form>
             </div>
@@ -209,13 +240,20 @@ class CreateProfile extends Component {
 }
 
 CreateProfile.propTypes = {
+  auth: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
+  auth: state.auth,
   profile: state.profile,
   errors: state.errors
 });
 
-export default connect(mapStateToProps)(CreateProfile);
+export default connect(
+  mapStateToProps,
+  {
+    createProfile
+  }
+)(withRouter(CreateProfile));
