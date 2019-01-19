@@ -218,7 +218,7 @@ router.delete(
     }).then(profile => {
       Post.findById(req.params.id).then(post => {
         //Check post owner
-        console.log(post);
+        // console.log(post);
         if (post.user.toString() !== req.user.id) {
           return res.status(401).json({
             notauthorized: "User not authorized"

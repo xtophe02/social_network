@@ -39,7 +39,7 @@ InputGroup.propTypes = {
   icon: PropTypes.string,
   error: PropTypes.string,
   type: PropTypes.string.isRequired,
-  onChage: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired
 };
 
 InputGroup.defaultProps = {
